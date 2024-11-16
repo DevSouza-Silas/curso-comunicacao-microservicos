@@ -3,3 +3,15 @@ server:
 spring:
   application:
     name: Product-api
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/product-db?useTimezone=true&serverTimezone=UTC
+    username: admin
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
