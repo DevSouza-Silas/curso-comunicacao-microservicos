@@ -11,7 +11,8 @@ services:
       - POSTGRES_PASSWORD=123456789
     ports:
       - 5435:5432
-  
+    networks:
+      - souz-network 
   product-db:
     image: postgres:16
     container_name: product-db
@@ -22,7 +23,8 @@ services:
       - POSTGRES_PASSWORD=123456
     ports:
       - 5433:5432
-  
+    networks:
+      - souz-network
   vendas-db:
     image: postgres:16
     container_name: vendas-db
@@ -33,7 +35,8 @@ services:
       - POSTGRES_PASSWORD=123456
     ports:
       - 5434:5432
-  
+    networks:
+      - souz-network
   vendas-rabbit:
     image: rabbitmq:3-management
     container_name: vendas-rabbit
@@ -42,6 +45,25 @@ services:
       - 5672:5672
       - 25676:25676
       - 15672:15672
-
-
-  
+    networks:
+      - souz-network  
+  product-api:
+    image: product-api:1.0
+    restart: always
+    build: ./product-api
+    working_dir: /product-api
+    environment:
+      TZ: America/Sao_Paulo
+      SPRING.DATASOURCE.URL: jdbc:postgresql://product-db:5432/product-db?useTimezone=true&serverTimezone=UTC
+      SPRING.DATASOURCE.USERNAME: admin
+      SPRING.DATASOURCE.PASSWORD: 123456
+    ports:
+      - 8081:8081
+    command: mvn spring-boot:run
+    depends_on:
+      - product-db
+    networks:
+      - souz-network
+networks:
+  souz-network:
+    driver: bridge     
